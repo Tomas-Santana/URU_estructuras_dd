@@ -11,24 +11,21 @@ typedef struct nodo {
  int InsertarInicio(NODO **cabeza, int dato);
  int InsertarFinal(NODO **cabeza, int dato);
  void ImprimirLista(NODO *cabeza);
- int EstaVacia(NODO *cabeza);
- int ExisteElemento(NODO *, int dato );
+
 
 int main (){
     
     NODO *cabeza = NULL;
-    InsertarFinal(&cabeza, 3);
+    InsertarInicio(&cabeza, 3);
     InsertarFinal(&cabeza, 0);
     InsertarFinal(&cabeza, 6);
     InsertarFinal(&cabeza, 0);
     InsertarFinal(&cabeza, 4);
     InsertarFinal(&cabeza, 5);
     InsertarFinal(&cabeza, 3);
+    InsertarFinal(&cabeza, 0);
 
- 
-
-
-
+    ImprimirLista(cabeza);
     return 0 ;
 }
 
@@ -80,21 +77,4 @@ int InsertarFinal(NODO **cabeza, int dato){
 
    return 0;
 }
-int EstaVacia(NODO *cabeza){
-    if(cabeza == NULL){
-        return 1 ;
-    }else {
-        return 0 ;
-    }
-}
-int ExisteElemento(NODO * cabeza, int dato ){
-    NODO *nAux = cabeza;
 
-    while(nAux != NULL){
-        if(nAux ->dato== dato){
-            return 1;
-        }
-        nAux  = nAux ->siguiente;
-    }
-    return 0 ;
-}
