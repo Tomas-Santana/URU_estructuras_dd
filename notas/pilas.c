@@ -24,5 +24,28 @@ typedef struct pila {
 }PILA;
 
 COCHE* crearCoche(char matricula[10], int modelo, int color, int marca){
-    COCHE* 
+    COCHE* cocheNuevo = NULL;
+    cocheNuevo = malloc(sizeof(COCHE));
+
+    if (cocheNuevo != NULL) {
+        cocheNuevo->color=color;
+        cocheNuevo->marca=marca;
+        cocheNuevo->modelo=modelo;
+        strcpy(cocheNuevo->matricula, matricula);
+    }
+    return cocheNuevo;
+}
+
+NODO* crearNodo(COCHE* coche) {
+    NODO* nuevo = NULL;
+    nuevo = malloc(sizeof(NODO));
+
+    if (nuevo != NULL) {
+        nuevo->dato = coche;
+        nuevo->siguiente = NULL;
+    }
+    return nuevo;
+}
+
+NODO* crearPila(){
 }

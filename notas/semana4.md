@@ -13,3 +13,6 @@ typedef struct nodo {
     struct nodo* anterior;
 }NODO; // Creacion del tipo de dato (a partir de ahora lo llamamos NODO)
 ```
+[Implementacion completa de la lista doblemente enlazada en C.](doublylinkedlist.c)
+
+
