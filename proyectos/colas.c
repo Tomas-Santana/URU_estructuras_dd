@@ -1,39 +1,36 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <limits.h>
 
 #define MAX_STRING 20
 
-typedef struct drink
-{
+// estructuras
+typedef struct Drink {
     char name[MAX_STRING];
-    float price; //price in USD
-    int vol; // volume in mL
+    float price; // en dolares
+    int vol; // en mililitros
 }Drink;
-
-typedef struct node
+typedef struct Node
 {
     Drink content;
     struct Node* next;
 }Node;
-
-typedef struct queue
+typedef struct Queue
 {
     Node *first, *last;
 }Queue;
 
-struct QueueDrink 
-{
-    Queue* Q;
-    Drink D;
-};
+typedef struct QueueDrink {
+    Drink drink;
+    Queue* queue;
+}QueueDrink;
 
 
-Node* newNode(Drink content) {
+// funciones
+Node* newNode(Drink drink) {
     Node* new = (Node*)malloc(sizeof(Node));
-    if (new!=NULL) {
-        new->content=content;
+    if (new!=NULL){
+        new->content=drink;
         new->next=NULL;
     }
     return new;
@@ -44,90 +41,107 @@ Queue* newQueue() {
     if (new!=NULL) {
         new->first=new->last=NULL;
     }
+    return new;
 }
 
-void addDrink(Queue* queue, Drink drink) {
-    Node* new = newNode(drink);
-    if (queue->first==NULL) 
-    { //if queue is empty
-        queue->first=queue->last=new;
+QueueDrink newQueueDrink() {
+    QueueDrink new;
+    new.drink.name[0]='\0';
+    new.drink.price=0;
+    new.drink.vol=0;
+    new.queue=newQueue();
+    return new;
+}
+
+void addDrink(Queue** queue, Drink drink) {
+    Node *new = newNode(drink);
+    if ((*queue)->first==NULL) {
+        (*queue)->first=(*queue)->last=new;
     }
-    else
-    { // if queue is not empty
-        queue->last=queue->last->next=new;
+    else {
+        (*queue)->last->next=new;
+        (*queue)->last=new;
     }
 }
 
-Queue** copyQueue(Queue** queue) {
-    
+Queue* copyQueue(Queue* queue) {
     Queue* new = newQueue();
-    Node* actual = (*queue)->first;
-    while (actual != NULL) {
-        addDrink(new, actual->content);
-        actual = actual->next;
-    }  
-    return &new;
-}
-
-//incompatible pointer type warning. Corre
-Queue* qPush(Queue** queue, Drink val){ 
-    Queue** returnQueue = copyQueue(queue);
-    Node* returnNode = newNode(val);
-    if ((*returnQueue)->first==NULL) 
-    { //Si la cola esra vacia
-        (*returnQueue)->first=(*returnQueue)->last=returnNode;
-    }
-    else
-    { // Si la cola no esta vacia
-        (*returnQueue)->last->next=returnNode;
-        (*returnQueue)->last=returnNode;
-    }
-    return *returnQueue;
-}
-//incompatible pointer type warning. No corre
-struct QueueDrink* qPop(Queue* queue) { //Devuelve una estructura con la nueva cola y el elemento sacado
-    Queue* returnQueue = queue;
-    Node* returnNode = returnQueue->first;
-    returnQueue->first = returnNode->next;
-    struct QueueDrink* returnQueueDrink = malloc(sizeof(struct QueueDrink));
-    returnQueueDrink->Q = returnQueue;
-    returnQueueDrink->D = returnNode->content;
-    return returnQueueDrink;
-
-}
-
-void iterateQueue(Queue* queue, Drink (f)(Drink))
-{
     Node* actual = queue->first;
-    while (actual != NULL)
+    while (actual!=NULL)
     {
-        f(actual->content);
+        addDrink(&new, actual->content);
         actual=actual->next;
     }
+    return new;
+    
 }
 
-Drink printQueue(Drink drink) {
-    printf("------------------------------------\n"
-    "|%-20s|%-6.2f|%-6i|\n"
-    "------------------------------------\n",
-    drink.name, drink.price, drink.vol);
+Queue* enQueue(Queue* queue, Drink drink) {
+    Queue* returnQ = copyQueue(queue);
+    Node* returnN = newNode(drink);
+    if (returnQ->first==NULL) {
+        returnQ->first=returnQ->last=returnN;
+    }
+    else {
+        returnQ->last->next=returnN;
+        returnQ->last=returnN;
+    }
+    return returnQ; 
 }
+
+struct QueueDrink deQueue(Queue* queue) {
+    struct QueueDrink returnQD;
+    if (queue->first==NULL) {
+        returnQD.drink.name[0]='\0';
+        returnQD.drink.price=0;
+        returnQD.drink.vol=0;
+        returnQD.queue=NULL;
+    }
+    else {
+        returnQD.drink=queue->first->content;
+        returnQD.queue=copyQueue(queue);
+        returnQD.queue->first=returnQD.queue->first->next;
+    }
+    return returnQD;
+}
+
+void printQueue(Queue* queue) {
+    Node* actual = queue->first;
+    int i=1;
+    printf("Advertencia: Nombres truncados a 10 caracteres, precios y volumenes a 5 digitos.\n");
+    printf("Bebidas disponibles:\n");
+    while (actual!=NULL)
+    {
+        printf("Bebida #%i--------------------------------------------\n"
+            "|Nombre:%-10s|Precio:%-5.2f USD|Volumen:%-5i mL|\n"
+            "-----------------------------------------------------\n"
+        
+        ,i, actual->content.name, actual->content.price, actual->content.vol%100000);
+
+        actual=actual->next;
+        i++;
+    } 
+}
+
+
 
 int main() {
-    Drink pepsi = {"Pepsi", 1.5, 550};
-    Drink cocaCola = {"Coca-Cola", 2.5, 1500};
-    Drink sevenUp = {"Seven-Up", 3, 2000 };
+    Drink coke= {"Coke", 12, 123};
+    Drink greenTea= {"Green Tea", 12, 1234};
+    Drink fanta= {"Fanta", 12, 12345};
+    Drink sprite= {"Sprite", 12, 123456};
+    Drink pepsi= {"Pepsi", 12, 1234567};
 
-    Queue* queue = newQueue();
-    queue = qPush(&queue, pepsi);
-    Queue* queue2 = qPush(&queue, cocaCola);
-    iterateQueue(queue, printQueue);
-    printf("\n\n\n\n");
-    iterateQueue(queue2, printQueue);
+    Queue* cola = newQueue();
+    cola = enQueue(cola, coke);
+    cola = enQueue(cola, greenTea);
+    cola = enQueue(cola, fanta);
+    cola = enQueue(cola, sprite);
+
+    printQueue(cola);
+
+
+
+    return 0;
+
 }
-
-
-
-
-
-
