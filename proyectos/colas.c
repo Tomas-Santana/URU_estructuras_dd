@@ -93,14 +93,8 @@ Queue* enQueue(Queue* queue, Drink drink) {
 
 // Devuelve una estructura con la bebida y la cola sin el primer elemento. No modifica la cola original.
 QueueDrink deQueue(Queue* queue) {
-    QueueDrink returnQD;
-    if (queue->first==NULL) {
-        returnQD.drink.name[0]='\0';
-        returnQD.drink.price=0;
-        returnQD.drink.vol=0;
-        returnQD.queue=NULL;
-    }
-    else {
+    QueueDrink returnQD = newQueueDrink();
+    if (queue->first!=NULL) {
         returnQD.drink=queue->first->content;
         returnQD.queue=copyQueue(queue);
         returnQD.queue->first=returnQD.queue->first->next;
