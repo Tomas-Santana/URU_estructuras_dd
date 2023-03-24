@@ -63,7 +63,7 @@ void addDrink(Queue** queue, Drink drink) {
         (*queue)->last=new;
     }
 }
-
+// Crea una copia de una cola, pero sin relacionar los punteros. 
 Queue* copyQueue(Queue* queue) {
     Queue* new = newQueue();
     Node* actual = queue->first;
@@ -76,6 +76,7 @@ Queue* copyQueue(Queue* queue) {
     
 }
 
+// Devuelve una cola con el nuevo elemento agregado. No modifica la cola original.
 Queue* enQueue(Queue* queue, Drink drink) {
     Queue* returnQ = copyQueue(queue);
     Node* returnN = newNode(drink);
@@ -89,8 +90,9 @@ Queue* enQueue(Queue* queue, Drink drink) {
     return returnQ; 
 }
 
-struct QueueDrink deQueue(Queue* queue) {
-    struct QueueDrink returnQD;
+// Devuelve una estructura con la bebida y la cola sin el primer elemento. No modifica la cola original.
+QueueDrink deQueue(Queue* queue) {
+    QueueDrink returnQD;
     if (queue->first==NULL) {
         returnQD.drink.name[0]='\0';
         returnQD.drink.price=0;
@@ -105,6 +107,7 @@ struct QueueDrink deQueue(Queue* queue) {
     return returnQD;
 }
 
+// Imprime los elementos de la cola.
 void printQueue(Queue* queue) {
     Node* actual = queue->first;
     int i=1;
@@ -123,21 +126,26 @@ void printQueue(Queue* queue) {
     } 
 }
 
-
-
 int main() {
     Drink coke= {"Coke", 12, 123};
     Drink greenTea= {"Green Tea", 12, 1234};
-    Drink fanta= {"Fanta", 12, 12345};
-    Drink sprite= {"Sprite", 12, 123456};
-    Drink pepsi= {"Pepsi", 12, 1234567};
+    Drink fanta= {"Fanta", 12, 123};
+    Drink sprite= {"Sprite", 12, 1234};
+    Drink pepsi= {"Pepsi", 12, 1234};
 
     Queue* cola = newQueue();
-    cola = enQueue(cola, coke);
     cola = enQueue(cola, greenTea);
+    cola = enQueue(cola, coke);
     cola = enQueue(cola, fanta);
     cola = enQueue(cola, sprite);
+    printf("Creando una cola y agregando unas bebidas.\n");
+    printQueue(cola);
 
+    QueueDrink colabebida = deQueue(cola);
+    printf("Sacando una bebida de la cola.\n"); 
+    printf("Bebida sacada: %s\n", colabebida.drink.name);
+    cola = colabebida.queue;
+    printf("Cola actual:\n\n");
     printQueue(cola);
 
 
