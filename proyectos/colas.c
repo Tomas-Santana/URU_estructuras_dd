@@ -64,6 +64,7 @@ void addDrink(Queue** queue, Drink drink) {
     }
 }
 // Crea una copia de una cola, pero sin relacionar los punteros. 
+// Necesaria para no modificar la cola original en las funciones de enQueue y deQueue.
 Queue* copyQueue(Queue* queue) {
     Queue* new = newQueue();
     Node* actual = queue->first;
